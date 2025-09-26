@@ -15,7 +15,7 @@ const TodoListItem = ({ text, id, completed, deleteTask, completeTask }) => {
         />
         <div
           className={
-            'text-md text-slate-700 px-2 decoration-slate-500 break-all ' +
+            'text-md text-slate-700 dark:text-slate-200 px-2 decoration-slate-500 dark:decoration-slate-400 break-all ' +
             (completed ? 'line-through' : '')
           }
         >
