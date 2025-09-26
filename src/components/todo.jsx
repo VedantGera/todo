@@ -1,16 +1,11 @@
-import React, { useRef, useState, useEffect, createRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import todo_icon from '../assets/todo_icon.png';
 import TodoListItem from './todo-listitem';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const Todo = () => {
   const inputRef = useRef(null);
-  const [tasks, setTasks] = useState(
-    (JSON.parse(localStorage.getItem('tasks')) || []).map(task => ({
-      ...task,
-      ref: createRef(null)
-    }))
-  );
+  const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem('tasks')) || []);
 
   const addTask = () => {
     const taskText = inputRef.current.value.trim();
@@ -20,7 +15,6 @@ const Todo = () => {
       id: Date.now(),
       text: taskText,
       completed: false,
-      ref: createRef(null)
     };
     setTasks([...tasks, newTask]);
   };
@@ -37,8 +31,19 @@ const Todo = () => {
     );
   };
 
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+    if (!destination) return;
+
+    const items = Array.from(tasks);
+    const [reorderedItem] = items.splice(source.index, 1);
+    items.splice(destination.index, 0, reorderedItem);
+
+    setTasks(items);
+  };
+
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks.map(({ ref, ...rest }) => rest)));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
   return (
@@ -63,24 +68,36 @@ const Todo = () => {
         </button>
       </div>
       {/* List */}
-      <div className="flex-1 overflow-y-auto" data-testid="task-list-container">
-        <TransitionGroup>
-          {tasks.map(({ id, text, completed, ref }) => {
-            return (
-              <CSSTransition key={id} nodeRef={ref} timeout={500} classNames="fade">
-                <TodoListItem
-                  ref={ref}
-                  text={text}
-                  id={id}
-                  completed={completed}
-                  deleteTask={deleteTask}
-                  completeTask={completeTask}
-                />
-              </CSSTransition>
-            );
-          })}
-        </TransitionGroup>
-      </div>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex-1 overflow-y-auto" data-testid="task-list-container">
+          <Droppable droppableId="tasks">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {tasks.map((task, index) => (
+                  <Draggable key={task.id} draggableId={task.id.toString()} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <TodoListItem
+                          text={task.text}
+                          id={task.id}
+                          completed={task.completed}
+                          deleteTask={deleteTask}
+                          completeTask={completeTask}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </div>
+      </DragDropContext>
     </div>
   );
 };

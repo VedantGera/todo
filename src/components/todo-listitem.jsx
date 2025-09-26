@@ -3,9 +3,9 @@ import tick_icon from '../assets/tick.png';
 import delete_icon from '../assets/delete.png';
 import not_tick from '../assets/not_tick.png';
 
-const TodoListItem = React.forwardRef(({ text, id, completed, deleteTask, completeTask }, ref) => {
+const TodoListItem = ({ text, id, completed, deleteTask, completeTask }) => {
   return (
-    <div ref={ref} className="flex items-center w-full">
+    <div className="flex items-center w-full" data-testid={`task-item-${id}`}>
       <div className="flex-1 flex items-center gap-2 my-3 hover:cursor-pointer">
         <img
           onClick={() => completeTask(id)}
@@ -30,6 +30,6 @@ const TodoListItem = React.forwardRef(({ text, id, completed, deleteTask, comple
       />
     </div>
   );
-});
+};
 
 export default TodoListItem;
