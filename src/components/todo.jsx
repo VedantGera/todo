@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import todo_icon from '../assets/todo_icon.png'
 import TodoListItem from './todo-listitem'
 
 const Todo = () => {
   const inputRef = useRef(null)
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem('tasks')) || [])
 
   const addTask = () => {
     const task = inputRef.current.value.trim()
@@ -16,11 +16,17 @@ const Todo = () => {
       completed: false
     }
     setTasks([...tasks, task_item])
-    console.log(tasks)
   }
   const deleteTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id))
   }
+
+  const completeTask = (id) => {
+    setTasks(tasks.map(task => task.id === id ? {...task, completed: !task.completed} : task))
+  }
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+  }, [tasks])
 
 
   return (
@@ -37,7 +43,7 @@ const Todo = () => {
         {/* List */}
         <div>
             {tasks.map(task => (
-                <TodoListItem key={task.id} text={task.text} id={task.id} completed={task.completed} deleteTask={deleteTask} />
+                <TodoListItem key={task.id} text={task.text} id={task.id} completed={task.completed} deleteTask={deleteTask} completeTask={completeTask} />
             ))}
         </div>
     </div>
