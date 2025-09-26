@@ -11,6 +11,7 @@ const Todo = () => {
       ref: createRef(null)
     }))
   );
+  const [filter, setFilter] = useState('all');
 
   const addTask = () => {
     const taskText = inputRef.current.value.trim();
@@ -46,6 +47,17 @@ const Todo = () => {
       <div className="flex items-center mt-7 gap-2">
         <img className="w-8 h-8" src={todo_icon} alt="todo_icon" />
         <h1 className="text-2xl font-semibold">Task Planner</h1>
+        <div className="relative ml-auto">
+          <select
+            onChange={(e) => setFilter(e.target.value)}
+            value={filter}
+            className="bg-gray-200 text-slate-600 rounded-full px-4 py-2 appearance-none"
+          >
+            <option value="all">All</option>
+            <option value="completed">Completed</option>
+            <option value="incomplete">Incomplete</option>
+          </select>
+        </div>
       </div>
       {/* Input Box */}
       <div className="flex my-7 items-center bg-gray-200 rounded-full">
@@ -65,10 +77,19 @@ const Todo = () => {
       {/* List */}
       <div className="flex-1 overflow-y-auto" data-testid="task-list-container">
         <TransitionGroup>
-          {tasks.map(({ id, text, completed, ref }) => {
-            return (
-              <CSSTransition key={id} nodeRef={ref} timeout={500} classNames="fade">
-                <TodoListItem
+          {tasks
+            .filter((task) => {
+              if (filter === 'completed') {
+                return task.completed;
+              } else if (filter === 'incomplete') {
+                return !task.completed;
+              }
+              return true;
+            })
+            .map(({ id, text, completed, ref }) => {
+              return (
+                <CSSTransition key={id} nodeRef={ref} timeout={500} classNames="fade">
+                  <TodoListItem
                   ref={ref}
                   text={text}
                   id={id}

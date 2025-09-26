@@ -5,13 +5,13 @@ import not_tick from '../assets/not_tick.png';
 
 const TodoListItem = React.forwardRef(({ text, id, completed, deleteTask, completeTask }, ref) => {
   return (
-    <div ref={ref} className="flex items-center w-full">
+    <div ref={ref} className="flex items-center w-full" data-testid="task-item">
       <div className="flex-1 flex items-center gap-2 my-3 hover:cursor-pointer">
         <img
           onClick={() => completeTask(id)}
           src={completed ? tick_icon : not_tick}
           className="w-6 h-6"
-          alt="tick_icon"
+          alt={completed ? 'Mark as Incomplete' : 'Mark as Complete'}
         />
         <div
           className={
