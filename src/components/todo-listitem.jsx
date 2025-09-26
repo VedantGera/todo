@@ -5,7 +5,7 @@ import not_tick from '../assets/not_tick.png';
 
 const TodoListItem = React.forwardRef(({ text, id, completed, deleteTask, completeTask }, ref) => {
   return (
-    <div ref={ref} className="flex items-center">
+    <div ref={ref} className="flex items-center w-full">
       <div className="flex-1 flex items-center gap-2 my-3 hover:cursor-pointer">
         <img
           onClick={() => completeTask(id)}
@@ -15,7 +15,7 @@ const TodoListItem = React.forwardRef(({ text, id, completed, deleteTask, comple
         />
         <div
           className={
-            'text-md text-slate-700 px-2 decoration-slate-500 ' +
+            'text-md text-slate-700 px-2 decoration-slate-500 break-all ' +
             (completed ? 'line-through' : '')
           }
         >

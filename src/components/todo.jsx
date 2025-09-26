@@ -42,7 +42,7 @@ const Todo = () => {
   }, [tasks]);
 
   return (
-    <div className="bg-white place-self-center w-11/12 max-w-md min-h-[550px] flex flex-col rounded-lg shadow-lg p-6">
+    <div className="bg-white place-self-center w-11/12 max-w-md h-[550px] flex flex-col rounded-lg shadow-lg p-6">
       <div className="flex items-center mt-7 gap-2">
         <img className="w-8 h-8" src={todo_icon} alt="todo_icon" />
         <h1 className="text-2xl font-semibold">Task Planner</h1>
@@ -63,22 +63,24 @@ const Todo = () => {
         </button>
       </div>
       {/* List */}
-      <TransitionGroup>
-        {tasks.map(({ id, text, completed, ref }) => {
-          return (
-            <CSSTransition key={id} nodeRef={ref} timeout={500} classNames="fade">
-              <TodoListItem
-                ref={ref}
-                text={text}
-                id={id}
-                completed={completed}
-                deleteTask={deleteTask}
-                completeTask={completeTask}
-              />
-            </CSSTransition>
-          );
-        })}
-      </TransitionGroup>
+      <div className="flex-1 overflow-y-auto" data-testid="task-list-container">
+        <TransitionGroup>
+          {tasks.map(({ id, text, completed, ref }) => {
+            return (
+              <CSSTransition key={id} nodeRef={ref} timeout={500} classNames="fade">
+                <TodoListItem
+                  ref={ref}
+                  text={text}
+                  id={id}
+                  completed={completed}
+                  deleteTask={deleteTask}
+                  completeTask={completeTask}
+                />
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
+      </div>
     </div>
   );
 };
